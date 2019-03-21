@@ -26,7 +26,7 @@ object MongoSupport {
 
   import scala.collection.JavaConversions._
   private val settings = MongoClientSettings.builder
-    .clusterSettings(ClusterSettings.builder().hosts(List(ServerAddress("localhost"))).build)
+    .clusterSettings(ClusterSettings.builder().hosts(List(ServerAddress(config.uri))).build)
     .codecRegistry(codecRegistry)
     .build
   private val mongoClient = MongoClient(settings)
