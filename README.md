@@ -38,3 +38,7 @@ docker run -u $(id -u):$(id -g) -ti --rm \
 ```
 
 The built distribution will be available in `harness-auth-server/dist` directory.
+
+### Publish to Sonatype
+First gpg keys should be created and sent to key server (https://www.scala-sbt.org/sbt-pgp/usage.html).
+Then artifacts can be signed and published via `sbt harnessAuthCommon/publishSigned`, and then released via `sbt sonatypeRelease`.
