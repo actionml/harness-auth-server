@@ -5,7 +5,7 @@ HARNESS_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SBT_SYSTEM_SCALA ?= no
 SBT_URL ?= https://git.io/sbt
 SBT ?= $(HARNESS_ROOT)/sbt/sbt
-DIST ?= dist/
+DIST ?= dist
 
 VERSION := $(shell grep ^version build.sbt | grep -o '".*"' | sed 's/"//g')
 # Enforce version of Scala set in build.sbt (specificly passed to sbt later!)
@@ -30,14 +30,14 @@ publish-local: build
 	$(SBT) ++$(SCALA_VERSION) -batch harnessAuthCommon/publish-local
 
 clean: sbt
+	$(SBT) ++$(SCALA_VERSION) -batch harnessAuthCommon/clean
 	$(SBT) ++$(SCALA_VERSION) -batch authServer/clean
 
 dist: clean clean-dist build
-	mkdir -p $(DIST) && cd $(DIST) && mkdir bin conf logs lib project
+	mkdir -p $(DIST) && cd $(DIST) && mkdir bin conf logs lib
 	cp auth-server/bin/* $(DIST)/bin/
 	cp auth-server/src/main/resources/*.conf $(DIST)/conf/
 	cp auth-server/src/main/resources/*.xml $(DIST)/conf/
-	cp auth-server/project/build.properties $(DIST)/project/
 	cp auth-server/target/universal/stage/lib/* $(DIST)/lib/
 	cp auth-server/target/universal/stage/bin/authserver $(DIST)/bin/main
 	echo $(VERSION) > $(DIST)/RELEASE
