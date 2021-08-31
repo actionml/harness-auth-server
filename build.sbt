@@ -2,8 +2,6 @@ import sbt.Keys.resolvers
 
 name := "harness-auth-server"
 
-version := "0.3.0"
-
 scalaVersion := "2.11.12"
 
 lazy val akkaVersion = "2.4.18"
@@ -17,7 +15,7 @@ resolvers +=  "Novus Release Repository" at "http://repo.novus.com/releases/"
 
 lazy val commonSettings = Seq(
   organization := "com.actionml",
-  version := "0.3.0",
+  version := "0.3.1",
   scalaVersion := "2.11.12",
   updateOptions := updateOptions.value.withLatestSnapshots(false),
   resolvers += Resolver.bintrayRepo("hseeberger", "maven"),
