@@ -13,6 +13,10 @@ resolvers += Resolver.bintrayRepo("hseeberger", "maven")
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 resolvers +=  "Novus Release Repository" at "http://repo.novus.com/releases/"
 
+lazy val root = (project in file(".")).settings(
+  publishArtifact := false
+)
+
 lazy val commonSettings = Seq(
   organization := "com.actionml",
   version := "0.3.1",
@@ -45,6 +49,7 @@ lazy val harnessAuthCommon = (project in file("harness-auth-common")).
     pomIncludeRepository := { _ => false },
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     sonatypeProjectHosting := Some(GitHubHosting("actionml", "harness-auth-server", "andrey@actionml.com")),
+    usePgpKeyHex("513353D6872892A57B0C1ED9639726BABE7BC0C8"),
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
