@@ -9,9 +9,9 @@ lazy val akkaHttpVersion = "10.0.9"
 lazy val circeVersion = "0.8.0"
 lazy val scalaTestVersion = "3.0.1"
 
-resolvers += Resolver.bintrayRepo("hseeberger", "maven")
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-resolvers +=  "Novus Release Repository" at "http://repo.novus.com/releases/"
+resolvers += Resolver.bintrayRepo("hseeberger", "maven").withAllowInsecureProtocol(true)
+resolvers += ("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots").withAllowInsecureProtocol(true)
+resolvers += Resolver.typesafeRepo("releases").withAllowInsecureProtocol(true)
 
 lazy val root = (project in file(".")).settings(
   publishArtifact := false
@@ -22,9 +22,9 @@ lazy val commonSettings = Seq(
   version := "0.3.1",
   scalaVersion := "2.11.12",
   updateOptions := updateOptions.value.withLatestSnapshots(false),
-  resolvers += Resolver.bintrayRepo("hseeberger", "maven"),
-  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-  resolvers += Resolver.mavenLocal,
+  resolvers += Resolver.bintrayRepo("hseeberger", "maven").withAllowInsecureProtocol(true),
+  resolvers += ("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots").withAllowInsecureProtocol(true),
+  resolvers += Resolver.mavenLocal.withAllowInsecureProtocol(true),
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % "1.2.3",
     "org.slf4j" % "log4j-over-slf4j" % "1.7.25",

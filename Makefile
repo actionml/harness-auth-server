@@ -2,9 +2,9 @@
 .PHONY: sbt clean clean-dist build dist publish-local
 
 HARNESS_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-SBT_SYSTEM_SCALA ?= no
-SBT_URL ?= https://git.io/sbt
-SBT ?= $(HARNESS_ROOT)/sbt/sbt
+SBT_URL ?= https://raw.githubusercontent.com/sbt/sbt/v1.5.5/sbt
+SBT_DIR ?= $(HARNESS_ROOT)/sbt
+SBT ?= $(SBT_DIR)/sbt
 DIST ?= dist
 
 VERSION := $(shell grep ^version build.sbt | grep -o '".*"' | sed 's/"//g')
@@ -17,21 +17,20 @@ ifeq ($(SBT),$(HARNESS_ROOT)/sbt/sbt)
 	@ SBT_DIR="$$(dirname $(SBT))" && mkdir -p $$SBT_DIR && cd $$SBT_DIR && \
 	[ -x sbt ] || ( echo "Installing sbt extras locally (from $(SBT_URL))"; \
 		which curl &> /dev/null && ( curl \-#SL -o sbt \
-			https://git.io/sbt && chmod 0755 sbt || exit 1; ) || \
-			( which wget &>/dev/null && wget -O sbt https://git.io/sbt && chmod 0755 sbt; ) \
+			$(SBT_URL) && chmod 0755 sbt || exit 1; ) || \
+			( which wget &>/dev/null && wget -O sbt $(SBT_URL) && chmod 0755 sbt; ) \
 	)
 endif
 
 
 build: sbt
-	$(SBT) ++$(SCALA_VERSION) -batch authServer/universal:stage
+	$(SBT) authServer/universal:stage
 
 publish-local: build
-	$(SBT) ++$(SCALA_VERSION) -batch harnessAuthCommon/publish-local
+	$(SBT) harnessAuthCommon/publish-local
 
 clean: sbt
-	$(SBT) ++$(SCALA_VERSION) -batch harnessAuthCommon/clean
-	$(SBT) ++$(SCALA_VERSION) -batch authServer/clean
+	$(SBT) clean
 
 dist: clean clean-dist build
 	mkdir -p $(DIST) && cd $(DIST) && mkdir bin conf logs lib
