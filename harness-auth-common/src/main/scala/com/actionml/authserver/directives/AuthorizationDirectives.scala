@@ -41,7 +41,7 @@ trait AuthorizationDirectives extends RouteDirectives with BasicDirectives with 
   }
 
   def hasAccess(role: RoleId, resourceId: ResourceId = ResourceId.*)
-               (implicit as: ActorSystem, mat: ActorMaterializer, ec: ExecutionContext, accessTokenOpt: Option[AccessToken], log: LoggingAdapter): Directive0 = {
+               (implicit ec: ExecutionContext, accessTokenOpt: Option[AccessToken], log: LoggingAdapter): Directive0 = {
     if (authEnabled) {
       accessTokenOpt.fold[Directive0] {
         reject(AuthorizationFailedRejection)

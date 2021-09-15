@@ -2,8 +2,6 @@ import sbt.Keys.resolvers
 
 name := "harness-auth-server"
 
-version := "0.3.0"
-
 scalaVersion := "2.11.12"
 
 lazy val akkaVersion = "2.4.18"
@@ -11,18 +9,22 @@ lazy val akkaHttpVersion = "10.0.9"
 lazy val circeVersion = "0.8.0"
 lazy val scalaTestVersion = "3.0.1"
 
-resolvers += Resolver.bintrayRepo("hseeberger", "maven")
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-resolvers +=  "Novus Release Repository" at "http://repo.novus.com/releases/"
+resolvers += Resolver.bintrayRepo("hseeberger", "maven").withAllowInsecureProtocol(true)
+resolvers += ("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots").withAllowInsecureProtocol(true)
+resolvers += Resolver.typesafeRepo("releases").withAllowInsecureProtocol(true)
+
+lazy val root = (project in file(".")).settings(
+  publishArtifact := false
+)
 
 lazy val commonSettings = Seq(
   organization := "com.actionml",
-  version := "0.3.0",
+  version := "0.3.1",
   scalaVersion := "2.11.12",
   updateOptions := updateOptions.value.withLatestSnapshots(false),
-  resolvers += Resolver.bintrayRepo("hseeberger", "maven"),
-  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-  resolvers += Resolver.mavenLocal,
+  resolvers += Resolver.bintrayRepo("hseeberger", "maven").withAllowInsecureProtocol(true),
+  resolvers += ("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots").withAllowInsecureProtocol(true),
+  resolvers += Resolver.mavenLocal.withAllowInsecureProtocol(true),
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % "1.2.3",
     "org.slf4j" % "log4j-over-slf4j" % "1.7.25",
@@ -47,6 +49,7 @@ lazy val harnessAuthCommon = (project in file("harness-auth-common")).
     pomIncludeRepository := { _ => false },
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     sonatypeProjectHosting := Some(GitHubHosting("actionml", "harness-auth-server", "andrey@actionml.com")),
+    usePgpKeyHex("513353D6872892A57B0C1ED9639726BABE7BC0C8"),
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
