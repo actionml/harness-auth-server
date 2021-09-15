@@ -41,4 +41,8 @@ object Roles {
     val create = "user_create"
     val permissions = "user_permissions"
   }
+
+  object system {
+    val info = "system_info"
+  }
 }
