@@ -34,8 +34,7 @@ jobs:
       SHELL_ENV: /etc/profile
     steps:
     - checkout
-    - setup_remote_docker:
-        docker_layer_caching: true
+    - setup_remote_docker
     - run:
         name: Build docker image
         command: |
@@ -45,41 +44,31 @@ jobs:
           echo "SHORT_GIT_HASH $SHORT_GIT_HASH"
           echo "DATE_BUILD $DATE_BUILD"
           docker image build -f docker/Dockerfile --build-arg version=ci --build-arg GIT_HASH=$SHORT_GIT_HASH --build-arg DATE_BUILD=$DATE_BUILD --build-arg BRANCH=${CIRCLE_BRANCH} -t actionml/auth-server:latest ./
-  publish:
-    docker:
-    - image: docker:stable
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Docker login
-          command: |
-            echo -n ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
-      - run:
-          name: Publish docker image
-          command: |
-              case "${CIRCLE_BRANCH}" in
-                "master")
-                  docker image push actionml/auth-server:latest
-                ;;
-                develop|devops)
-                  BRANCH=`echo "${CIRCLE_BRANCH}" | sed s/'\/'/-/g`
-                  docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH
-                  docker image push actionml/auth-server:$BRANCH
-                  docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH-$SHORT_GIT_HASH
-                  docker image push actionml/auth-server:$BRANCH-$SHORT_GIT_HASH
-                  docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH-$DATE_BUILD
-                  docker image push actionml/auth-server:$BRANCH-$DATE_BUILD
-                ;;
-                *)
-                ;;
-              esac
-      
+    - run:
+        name: Docker login
+        command: |
+          echo -n ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
+    - run:
+        name: Publish docker image
+        command: |
+            case "${CIRCLE_BRANCH}" in
+              "master")
+                docker image push actionml/auth-server:latest
+              ;;
+              develop|devops)
+                BRANCH=`echo "${CIRCLE_BRANCH}" | sed s/'\/'/-/g`
+                docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH
+                docker image push actionml/auth-server:$BRANCH
+                docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH-$SHORT_GIT_HASH
+                docker image push actionml/auth-server:$BRANCH-$SHORT_GIT_HASH
+                docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH-$DATE_BUILD
+                docker image push actionml/auth-server:$BRANCH-$DATE_BUILD
+              ;;
+              *)
+              ;;
+            esac
 workflows:
   version: 2
   default:
     jobs:
     - build
-    - publish:
-        requires:
-        - build
