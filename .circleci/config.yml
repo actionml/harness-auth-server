@@ -1,33 +1,33 @@
 version: 2
 jobs:
+  # build:
+    # docker:
+    # - image: actionml/harness-sdk:0.1
+    #   entrypoint: /entrypoint.sh
+    # environment:
+    #   - SDK_VERBOSE: true
+    #   - JVM_OPTS: -Xms512m -Xmx3584m -Xss2m
+    # steps:
+    # - checkout
+    # - restore_cache:
+    #     keys:
+    #     - auth-{{ checksum "build.sbt" }}
+    # - run:
+    #     name: Build environment details
+    #     command: /details.sh
+    # - run:
+    #     name: Build Harness Auth Server
+    #     command: make build
+    # - save_cache:
+    #     key: auth-{{ checksum "build.sbt" }}
+    #     paths:
+    #     - /root/.sbt
+    #     - /root/.ivy2
+    # - persist_to_workspace:
+    #     root: /root/project/dist
+    #     paths:
+    #     - ./
   build:
-    docker:
-    - image: actionml/harness-sdk:0.1
-      entrypoint: /entrypoint.sh
-    environment:
-      - SDK_VERBOSE: true
-      - JVM_OPTS: -Xms512m -Xmx3584m -Xss2m
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - auth-{{ checksum "build.sbt" }}
-    - run:
-        name: Build environment details
-        command: /details.sh
-    - run:
-        name: Build Harness Auth Server
-        command: make build
-    - save_cache:
-        key: auth-{{ checksum "build.sbt" }}
-        paths:
-        - /root/.sbt
-        - /root/.ivy2
-    - persist_to_workspace:
-        root: /root/project/dist
-        paths:
-        - ./
-  publish:
     docker:
     - image: docker:stable
     environment:
@@ -35,8 +35,8 @@ jobs:
     steps:
     - checkout
     - setup_remote_docker
-    - attach_workspace:
-        at: /root/project/dist
+    # - attach_workspace:
+    #     at: /root/project/dist
     - run:
         name: Install Docker Compose
         command: |
