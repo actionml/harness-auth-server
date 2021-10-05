@@ -55,25 +55,7 @@ jobs:
           source $SHELL_ENV
           echo "SHORT_GIT_HASH $SHORT_GIT_HASH"
           echo "DATE_BUILD $DATE_BUILD"
-          docker image build -f docker/Dockerfile --build-arg version=ci --build-arg GIT_HASH=$SHORT_GIT_HASH --build-arg DATE_BUILD=$DATE_BUILD --build-arg BRANCH=${CIRCLE_BRANCH} -t actionml/harness-auth-server:latest ./
-    # TODO: How to run a image test?
-    # - run:
-    #     name: Test docker image
-    #     command: |
-    #           cd docker && \
-    #           mv envs .env &&\
-    #           docker-compose up -d --build
-    #           docker-compose ps
-    #           sleep 45
-    #           docker-compose exec harness-cli bash -c 'curl elasticsearch:9200'
-    #           docker-compose exec harness-cli bash -c 'sed -i "s|training_sleep_seconds=40|training_sleep_seconds=90|g" /harness-cli/examples/ur/simple-integration-test.sh'
-    #           docker-compose logs harness-auth-server
-    #           docker-compose exec harness-cli bash -c 'harness-cli status'; RESULT=$?
-    #           docker-compose exec harness-cli bash -c 'harness-cli status system'; RESULT=$?
-    #           docker-compose exec harness-cli bash -c 'cd harness-cli && ./examples/ur/simple-integration-test.sh dc'; RESULT=$?
-    #           echo "harness-cli simple-integration-test finished"
-    #           echo "export RESULT=$RESULT" >> $SHELL_ENV
-    #           source $SHELL_ENV
+          docker image build -f docker/Dockerfile --build-arg version=ci --build-arg GIT_HASH=$SHORT_GIT_HASH --build-arg DATE_BUILD=$DATE_BUILD --build-arg BRANCH=${CIRCLE_BRANCH} -t actionml/auth-server:latest ./
     - run:
         name: Publish docker image
         command: |
@@ -86,16 +68,16 @@ jobs:
           then
             case "${CIRCLE_BRANCH}" in
               "master")
-                docker image push actionml/harness-auth-server:latest
+                docker image push actionml/auth-server:latest
               ;;
               develop|devops)
                 BRANCH=`echo "${CIRCLE_BRANCH}" | sed s/'\/'/-/g`
-                docker tag actionml/harness-auth-server:latest actionml/harness-auth-server:$BRANCH
-                docker image push actionml/harness-auth-server:$BRANCH
-                docker tag actionml/harness-auth-server:latest actionml/harness-auth-server:$BRANCH-$SHORT_GIT_HASH
-                docker image push actionml/harness-auth-server:$BRANCH-$SHORT_GIT_HASH
-                docker tag actionml/harness-auth-server:latest actionml/harness-auth-server:$BRANCH-$DATE_BUILD
-                docker image push actionml/harness-auth-server:$BRANCH-$DATE_BUILD
+                docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH
+                docker image push actionml/auth-server:$BRANCH
+                docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH-$SHORT_GIT_HASH
+                docker image push actionml/auth-server:$BRANCH-$SHORT_GIT_HASH
+                docker tag actionml/auth-server:latest actionml/auth-server:$BRANCH-$DATE_BUILD
+                docker image push actionml/auth-server:$BRANCH-$DATE_BUILD
               ;;
               *)
               ;;
