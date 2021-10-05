@@ -1,32 +1,5 @@
 version: 2
 jobs:
-  # build:
-    # docker:
-    # - image: actionml/harness-sdk:0.1
-    #   entrypoint: /entrypoint.sh
-    # environment:
-    #   - SDK_VERBOSE: true
-    #   - JVM_OPTS: -Xms512m -Xmx3584m -Xss2m
-    # steps:
-    # - checkout
-    # - restore_cache:
-    #     keys:
-    #     - auth-{{ checksum "build.sbt" }}
-    # - run:
-    #     name: Build environment details
-    #     command: /details.sh
-    # - run:
-    #     name: Build Harness Auth Server
-    #     command: make build
-    # - save_cache:
-    #     key: auth-{{ checksum "build.sbt" }}
-    #     paths:
-    #     - /root/.sbt
-    #     - /root/.ivy2
-    # - persist_to_workspace:
-    #     root: /root/project/dist
-    #     paths:
-    #     - ./
   build:
     docker:
     - image: docker:stable
@@ -41,8 +14,10 @@ jobs:
           echo 'export SHORT_GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)' >> $SHELL_ENV
           echo 'export DATE_BUILD=$(date +'%Y-%m-%d')' >> $SHELL_ENV
           source $SHELL_ENV
+
           echo "SHORT_GIT_HASH $SHORT_GIT_HASH"
           echo "DATE_BUILD $DATE_BUILD"
+          
           docker image build -f docker/Dockerfile --build-arg version=ci --build-arg GIT_HASH=$SHORT_GIT_HASH --build-arg DATE_BUILD=$DATE_BUILD --build-arg BRANCH=${CIRCLE_BRANCH} -t actionml/auth-server:latest ./
     - run:
         name: Docker login
@@ -51,6 +26,9 @@ jobs:
     - run:
         name: Publish docker image
         command: |
+            
+            source $SHELL_ENV
+            
             case "${CIRCLE_BRANCH}" in
               "master")
                 docker image push actionml/auth-server:latest
